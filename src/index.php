@@ -10,11 +10,12 @@ $todos = [
 ];
 
 
-function serialize_model(int $id, string $content) {
-	return json_encode([
+function serialize_model(int $id, string $content): array {
+	return [
 		'id' => $id,
 		'content' => $content,
-	]);
+	];
+}
 }
 
 if ($method == 'GET' && $path == '/v1/todos') {
