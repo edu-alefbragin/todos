@@ -16,6 +16,14 @@ function serialize_model(int $id, string $content): array {
 		'content' => $content,
 	];
 }
+
+function serialize_list($todos): array {
+	$list = [];
+	foreach ($todos as $id => $content) {
+		$list[] = serialize_model($id, $content);
+	}
+	return $list;
+}
 }
 
 if ($method == 'GET' && $path == '/v1/todos') {
