@@ -24,10 +24,15 @@ function serialize_list($todos): array {
 	}
 	return $list;
 }
+
+function list_todos() {
+	global $todos;
+	echo json_encode(serialize_list($todos));
 }
 
 if ($method == 'GET' && $path == '/v1/todos') {
-	http_response_code(501);
+	http_response_code(200);
+	list_todos();
 } else if ($method == 'GET' && preg_match('|^/v1/todos/(\d{1,9})$|', $path, $matches)) {
 	$id = $matches[1];
 	http_response_code(501);
