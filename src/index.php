@@ -3,6 +3,13 @@
 $method = $_SERVER['REQUEST_METHOD'];
 $path = $_SERVER['REQUEST_URI'];
 
+function serialize_model(int $id, string $content) {
+	return json_encode([
+		'id' => $id,
+		'content' => $content,
+	]);
+}
+
 if ($method == 'GET' && $path == '/v1/todos') {
 	http_response_code(501);
 } else if ($method == 'GET' && preg_match('|^/v1/todos/(\d{1,9})$|', $path, $matches)) {
