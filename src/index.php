@@ -3,6 +3,13 @@
 $method = $_SERVER['REQUEST_METHOD'];
 $path = $_SERVER['REQUEST_URI'];
 
+$todos = [
+	"Install Debian",
+	"(A) Read about Nginx location",
+	"(B) Fix bash complition"
+];
+
+
 function serialize_model(int $id, string $content) {
 	return json_encode([
 		'id' => $id,
