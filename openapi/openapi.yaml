@@ -1,0 +1,30 @@
+---
+
+openapi: 3.0.3
+info:
+  title: TODO service API
+  version: 0.2.0
+paths:
+  '/todos/{id}':
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        description: ID of TODO list item
+    get:
+      responses:
+        '200':
+           description: TODO list item
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   id:
+                     type: integer
+                     description: ID of TODO list item
+                   content:
+                     type: string
+                     description: Content of TODO item
