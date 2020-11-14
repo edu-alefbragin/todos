@@ -1,5 +1,12 @@
 # Deployment
 
+Configure deployment scripts:
+
+```bash
+cp ./scripts/config_remote.example.sh ./scripts/config_remote.sh
+vi ./scripts/config_remote.sh
+```
+
 Provision remote host:
 
 ```bash
