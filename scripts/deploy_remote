@@ -1,0 +1,12 @@
+#!/bin/bash
+
+REMOTE_HOST=188.68.220.222
+
+scp ./scripts/provision_remote.d/todos root@188.68.220.222:/etc/nginx/sites-available/todos
+
+ssh root@$REMOTE_HOST -- mkdir --parent /var/www/todos
+ssh root@$REMOTE_HOST -- ln --force --symbolic /etc/nginx/sites-available/todos /etc/nginx/sites-enabled/todos
+ssh root@$REMOTE_HOST -- rm --force /etc/nginx/sites-enabled/default
+ssh root@$REMOTE_HOST -- service nginx reload
+
+rsync --archive --recursive --delete . root@$REMOTE_HOST:/var/www/todos
