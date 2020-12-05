@@ -1,0 +1,56 @@
+#!/bin/bash
+
+set -euo pipefail
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+CONFIG_VSCALE="${DIR}/config_vscale.sh"
+CONFIG_REMOTE="${DIR}/config_remote.sh"
+
+source "${CONFIG_VSCALE}"
+
+# TODO Check server existance by API call
+if [[ -n "${VSCALE_CTID:-}" ]]; then
+	>&2 echo 'Server already created.'
+	exit 0
+fi
+
+>&2 echo 'Send request for create server...'
+
+curl --fail --request POST 'https://api.vscale.io/v1/scalets' \
+	-H 'Content-Type: application/json;charset=UTF-8' \
+	-H "X-Token: ${VSCALE_TOKEN}" \
+	-d '{
+	  "make_from": "debian_10_64_001_master",
+	  "rplan": "small",
+	  "do_start": true,
+	  "name": "TodoService",
+	  "keys": ['"${VSCALE_SSH_ID}"'],
+	  "location": "spb0"
+	}' > "${DIR}/create_server_response.json"
+
+RESPONSE_CTID="$( jq .ctid "${DIR}/create_server_response.json" )"
+
+>&2 echo 'Update config_vscale.sh'
+
+sed --in-place '/^VSCALE_CTID=/d' "${CONFIG_VSCALE}"
+echo "VSCALE_CTID=${RESPONSE_CTID}" >> "${CONFIG_VSCALE}"
+
+while :; do
+	>&2 echo 'Send request for public address...'
+
+	RESPONSE_PUBLIC_ADDRESS="$( curl "https://api.vscale.io/v1/scalets/${RESPONSE_CTID}" \
+		-H "X-Token: ${VSCALE_TOKEN}" \
+		| jq --raw-output .public_address.address )"
+
+	if [[ "${RESPONSE_PUBLIC_ADDRESS}" != 'null' ]]; then
+		>&2 echo 'Update config_remote.sh'
+
+		sed --in-place '/^HOST=/d' "${CONFIG_REMOTE}"
+		echo "HOST=${RESPONSE_PUBLIC_ADDRESS}" >> "${CONFIG_REMOTE}"
+		break
+	fi
+
+	>&2 echo 'No public address yet. Resend request...'
+
+	sleep 1
+done

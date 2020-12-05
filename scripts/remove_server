@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -euo pipefail
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+CONFIG_VSCALE="${DIR}/config_vscale.sh"
+
+source "${CONFIG_VSCALE}"
+
+# TODO Check server existance by API call
+if [[ -z "${VSCALE_CTID:-}" ]]; then
+        >&2 echo 'No server created yet.'
+        exit 0
+fi
+
+>&2 echo 'Send request for remove server...'
+
+curl --fail --request DELETE "https://api.vscale.io/v1/scalets/${VSCALE_CTID}" \
+	-H 'Content-Type: application/json;charset=UTF-8' \
+	-H "X-Token: ${VSCALE_TOKEN}" > "${DIR}/remove_server_response.json"
+
+sed --in-place '/^VSCALE_CTID=/d' "${CONFIG_VSCALE}"

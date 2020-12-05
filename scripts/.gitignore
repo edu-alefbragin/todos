@@ -1,1 +1,4 @@
 /config_remote.sh
+/config_vscale.sh
+/create_server_response.json
+/remove_server_response.json
