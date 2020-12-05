@@ -12,4 +12,4 @@ ssh root@$HOST -- ln --force --symbolic /etc/nginx/sites-available/todos /etc/ng
 ssh root@$HOST -- rm --force /etc/nginx/sites-enabled/default
 ssh root@$HOST -- service nginx reload
 
-rsync --archive --recursive --delete . root@$HOST:/var/www/todos
+rsync --archive --recursive --delete "${DIR}/.." root@$HOST:/var/www/todos
