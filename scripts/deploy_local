@@ -1,4 +1,11 @@
 #!/bin/bash
-echo Deploying...
-sudo cp src/index.php /var/www/php/index.php
-echo Deployed.
+
+set -euo pipefail
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+>&2 echo Deploying...
+sudo rm --recursive --force /var/www/todos
+sudo cp --recursive "${DIR}/../src" /var/www/todos
+sudo chown --recursive root:root /var/www/todos
+>&2 echo Deployed.
