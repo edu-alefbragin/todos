@@ -1,13 +1,20 @@
 #!/bin/bash
 
+set -euo pipefail
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 source "${DIR}/config_remote.sh"
 
+REMOTE_CMD='env DEBIAN_FRONTEND=noninteractive apt-get update && \
+    env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y && \
+    env DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && \
+    apt-get install -y nginx && \
+    apt-get install -y php-fpm'
 
-ssh root@$HOST -- env DEBIAN_FRONTEND=noninteractive apt-get update
-ssh root@$HOST -- env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
+ssh -o StrictHostKeyChecking=no root@$HOST -- "${REMOTE_CMD}"
 
+# TODO Answer the cloud.cfg question automaticly
 # Configuration file '/etc/cloud/cloud.cfg'
 #  ==> Modified (by you or by a script) since installation.
 #  ==> Package distributor has shipped an updated version.
@@ -19,8 +26,4 @@ ssh root@$HOST -- env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
 #  The default action is to keep your current version.
 # *** cloud.cfg (Y/I/N/O/D/Z) [default=N] ? Y
 
-# OpenSSH? Install mainteiner version
-
-ssh root@$HOST -- env DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y
-ssh root@$HOST -- apt-get install -y nginx
-ssh root@$HOST -- apt-get install -y php-fpm
+# TODO Consider to install mainteiner version of OpenSSH config
