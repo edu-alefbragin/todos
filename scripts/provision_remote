@@ -9,6 +9,7 @@ source "${DIR}/config_remote.sh"
 REMOTE_CMD='env DEBIAN_FRONTEND=noninteractive apt-get update && \
     env DEBIAN_FRONTEND=noninteractive apt-get upgrade -y && \
     env DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && \
+    apt-get install -y xz-utils && \
     apt-get install -y nginx && \
     apt-get install -y php-fpm'
 

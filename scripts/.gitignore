@@ -2,3 +2,4 @@
 /config_vscale.sh
 /create_server_response.json
 /remove_server_response.json
+/package_build

@@ -1,15 +1,21 @@
 #!/bin/bash
 
+set -euo pipefail
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 source "${DIR}/config_remote.sh"
 
+PACKAGE_BUILD_DIR="${DIR}/package_build"
+PACKAGE_FILE="${PACKAGE_BUILD_DIR}/todos.xz.run"
 
-scp "${DIR}/provision_remote.d/todos" root@$HOST:/etc/nginx/sites-available/todos
+rsync --archive --recursive --delete \
+    --exclude "vendor" \
+    "${DIR}/../src" "${DIR}/package/"
 
-ssh root@$HOST -- mkdir --parent /var/www/todos
-ssh root@$HOST -- ln --force --symbolic /etc/nginx/sites-available/todos /etc/nginx/sites-enabled/todos
-ssh root@$HOST -- rm --force /etc/nginx/sites-enabled/default
-ssh root@$HOST -- service nginx reload
+(cd "${DIR}/package/src" && composer install)
 
-rsync --archive --recursive --delete "${DIR}/.." root@$HOST:/var/www/todos
+mkdir --parents "${PACKAGE_BUILD_DIR}"
+makeself --xz "${DIR}/package" "${PACKAGE_FILE}" "Todo Service" ./install
+REMOTE_CMD='cat - > /root/package && chmod +x /root/package && /root/package'
+ssh "root@${HOST}" -- "${REMOTE_CMD}" < "${PACKAGE_FILE}"
