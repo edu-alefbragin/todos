@@ -20,7 +20,7 @@ server {
 	#
 	# include snippets/snakeoil.conf;
 
-	root /var/www/todos/src;
+	root /var/www/todos/public;
 
 	index index.php;
 

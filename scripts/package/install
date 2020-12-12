@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -euo pipefail
+
+rm -rf /var/www/todos
+mv src /var/www/todos
+
+cp todos /etc/nginx/sites-available/todos
+ln --force --symbolic /etc/nginx/sites-available/todos /etc/nginx/sites-enabled/todos
+rm -f /etc/nginx/sites-enabled/default
+service nginx reload
